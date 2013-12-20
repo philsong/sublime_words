@@ -4,42 +4,25 @@ import (
 	"github.com/codegangsta/martini"
 	//"github.com/codegangsta/martini-contrib/auth"
 	"github.com/codegangsta/martini-contrib/sessions"
+	"log"
 	"sublime"
 )
 
 func main() {
 	m := martini.Classic()
-	sublime.Mysqltest()
-	m.Get("/", func() string {
-		return "Hello weiyan!"
-	})
-	m.Get("/signup", func() string {
-		return "Hello signup!"
-	})
-	m.Get("/signin", func() string {
-		return "Hello signin!"
-	})
-	m.Get("/inspect", func() string {
-		return "Hello inspect!"
-	})
-	m.Get("/add", func() string {
-		return "Hello add!"
-	})
-	m.Post("/signup", func() string {
-		return "Hello signup!"
-	})
-	m.Post("/signin", func() string {
-		return "Hello signin!"
-	})
-	m.Post("/inspect", func() string {
-		return "Hello inspect!"
-	})
-	m.Post("/add", func() string {
-		return "Hello add!"
-	})
 
-	store := sessions.NewCookieStore([]byte("secret123"))
-	m.Use(sessions.Sessions("my_session", store))
+	// log before and after a request
+	m.Use(func(c martini.Context, log *log.Logger) {
+		log.Println("before a request")
+
+		c.Next()
+
+		log.Println("after a request")
+	})
+	sublime.Route(m)
+
+	store := sessions.NewCookieStore([]byte("secret_words_key_xxx"))
+	m.Use(sessions.Sessions("weiyan_session", store))
 
 	m.Get("/set", func(session sessions.Session) string {
 		session.Set("hello", "world")
